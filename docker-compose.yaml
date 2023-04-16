@@ -1,0 +1,38 @@
+version: '3.3'
+volumes:
+  localdb
+
+services:
+  db:
+    image: postgres
+    ports:
+      - '5432'
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    volumes:
+      - localdb:/tmp/compose-db:/var/lib/postgresql/data
+
+  weventful:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: [ "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port=8000", "--reload" ]
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/opt/app/src/
+    env_file:
+      - ./.env
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
