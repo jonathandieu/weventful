@@ -12,6 +12,7 @@ asyncpg = "*"
 ujson = "*"
 setuptools = "*"
 sqlalchemy = {extras = ["asyncio"], version = "*"}
+monkeytype = "*"
 
 [dev-packages]
 pytest = "*"
