@@ -35,3 +35,7 @@ async def get_async_session() -> AsyncSession:
 
 # Engine callables
 async_engine = create_custom_async_engine(db_root_settings)
+async_session = get_async_session()
+print(dir(async_session))
+# with async_session as session:
+    # print(dir(session))
